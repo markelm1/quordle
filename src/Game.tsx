@@ -1,4 +1,6 @@
-import { Component, onCleanup } from "solid-js";
+import createResizeObserver from "@solid-primitives/resize-observer";
+import { useSearchParams } from "solid-app-router";
+import { Component, createMemo, createSignal, onCleanup } from "solid-js";
 import {
   BOX_SIZE,
   GAME_COLS,
@@ -10,6 +12,8 @@ import { useGamesDataContext } from "./GameDataProvider";
 import GameSquare from "./GameTile";
 import Header from "./Header";
 import Keyboard from "./Keyboard";
+import ScoreResults from "./ScoreResults";
+import Tutorial from "./Tutorial";
 import { GameMode } from "./types";
 
 export const GAME_WIDTH = BOX_SIZE * GAME_COLS * NUM_GAMES_X + 4;
@@ -54,16 +58,36 @@ type GameProps = {
 const Game: Component<GameProps> = (props) => {
   const [gamesData, gamesDataFuncs] = useGamesDataContext();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [fontSize, setFontSize] = createSignal(35);
+
   const keyEventListener = (e: KeyboardEvent) => {
     gamesDataFuncs.sendKey(props.mode, e);
   };
   document.addEventListener("keydown", keyEventListener);
   onCleanup(() => document.removeEventListener("keydown", keyEventListener));
 
+  const tutorialOpen = createMemo(() => searchParams.tutorial === "true");
+
+  const refCallback = createResizeObserver({
+    onResize: ({ width }) => setFontSize(width / 15),
+  });
+
   return (
-    <div class="w-full h-full absolute flex flex-col">
-      <Header />
-      <div class="max-w-[550px] m-auto overflow-auto w-full flex-auto">
+    <div class="w-full h-full absolute flex flex-col overflow-hidden">
+      <Header onOpenTutorial={() => setSearchParams({ tutorial: true })} />
+      <div
+        class="max-w-[550px] m-auto w-full flex-auto"
+        classList={{
+          "overflow-hidden": tutorialOpen(),
+          "overflow-auto": !tutorialOpen(),
+        }}
+        style={{
+          "font-size": fontSize() + "px",
+        }}
+        ref={refCallback}
+      >
         <div class="w-full flex-col">
           {NUM_GAMES_Y_ARR.map((gameY) => (
             <div class="flex w-full">
@@ -74,7 +98,32 @@ const Game: Component<GameProps> = (props) => {
           ))}
         </div>
       </div>
-      <Keyboard mode={props.mode} />
+      <div
+        class="max-w-[550px] m-auto w-full"
+        style={{
+          "font-size": fontSize() + "px",
+        }}
+      >
+        {gamesDataFuncs.isGameComplete(props.mode) ? (
+          <ScoreResults mode={props.mode} />
+        ) : (
+          <Keyboard mode={props.mode} />
+        )}
+      </div>
+      <div
+        class="absolute w-full h-full bg-gray-800 overflow-auto transition-all ease-in-out duration-500"
+        classList={{
+          "opacity-100 top-0": tutorialOpen(),
+          "opacity-0 top-[100%]": !tutorialOpen(),
+        }}
+        style={{
+          "font-size": fontSize() + "px",
+        }}
+      >
+        <Tutorial
+          onCloseTutorial={() => setSearchParams({ tutorial: undefined })}
+        />
+      </div>
     </div>
   );
 };

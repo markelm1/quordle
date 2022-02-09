@@ -9,12 +9,75 @@ import {
 } from "solid-js/store";
 import {
   ALLOWED_SET,
+  ALPHABET,
   ANSWERS,
   ANSWERS_SET,
+  GAME_COLS,
   GAME_ROWS,
+  NUM_GAMES,
   START_DATE,
 } from "./constants";
-import { GameData, GameMode, GamesData, GamesDataProviderFuncs } from "./types";
+import {
+  BoxState,
+  GameData,
+  GameMode,
+  GamesData,
+  GamesDataProviderFuncs,
+} from "./types";
+import { indexOfAll } from "./utils";
+
+export const generateBoxStatesFromGuess = (
+  guess: string,
+  answer: string
+): BoxState[] => {
+  const states: BoxState[] = [];
+  for (let i = 0; i < GAME_COLS; i++) {
+    const guessLetter = guess[i];
+    const answerLetter = answer[i];
+    if (guessLetter === answerLetter) {
+      states.push("correct");
+    } else if (answer.indexOf(guessLetter) > 0) {
+      const allOtherIndicies = indexOfAll(answer, guessLetter);
+      let hasLetterCorrectElsewhere = false;
+      let hasLetterIncorrectElsewhere = false;
+      for (const index of allOtherIndicies) {
+        if (index === i) continue;
+        if (answer[index] === guess[index]) {
+          hasLetterCorrectElsewhere = true;
+        } else if (
+          answer[index] !== guess[index] &&
+          answer[index] === guessLetter
+        ) {
+          hasLetterIncorrectElsewhere = true;
+        }
+      }
+      states.push(
+        hasLetterCorrectElsewhere && !hasLetterIncorrectElsewhere
+          ? "none"
+          : "diff"
+      );
+    } else {
+      states.push("none");
+    }
+  }
+  return states;
+};
+
+export const generateAllGamesBoxStates = (
+  guesses: string[],
+  answers: string[]
+): BoxState[][][] => {
+  const states: BoxState[][][] = [[], [], [], []];
+  for (let i = 0; i < answers.length; i++) {
+    const guessIndex = guesses.indexOf(answers[i]);
+    for (let g = 0; g < guesses.length; g++) {
+      if (g <= guessIndex || guessIndex === -1) {
+        states[i].push(generateBoxStatesFromGuess(guesses[g], answers[i]));
+      }
+    }
+  }
+  return states;
+};
 
 export const generateWordsFromSeed = (seed: number): string[] => {
   let answers: string[] | undefined;
@@ -51,12 +114,16 @@ function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
       guesses: [],
       answers: [],
       current: "",
+      states: [[], [], [], []],
+      answersCorrect: [-1, -1, -1, -1],
     },
     free: {
       seed: 0,
       guesses: [],
       answers: [],
       current: "",
+      states: [[], [], [], []],
+      answersCorrect: [-1, -1, -1, -1],
     },
   };
   (["daily", "free"] as GameMode[]).forEach((mode) => {
@@ -65,28 +132,40 @@ function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
       const lastSeed = Number(window.localStorage.getItem("last_" + mode));
       const guesses = window.localStorage.getItem(mode + "_guesses") || "";
       if (lastSeed && (mode === "free" || lastSeed === currentDailySeed)) {
+        const guessesArr = guesses ? guesses.split(",") : [];
+        const answers = generateWordsFromSeed(lastSeed);
         gameData = {
           seed: lastSeed,
-          guesses: guesses ? guesses.split(",") : [],
-          answers: generateWordsFromSeed(lastSeed),
+          guesses: guessesArr,
+          answers,
           current: "",
+          states: generateAllGamesBoxStates(guessesArr, answers),
+          answersCorrect: [0, 1, 2, 3].map((i) =>
+            guessesArr.indexOf(answers[i])
+          ),
         };
       } else {
         const seed = mode === "daily" ? currentDailySeed : date.getTime();
+        const answers = generateWordsFromSeed(seed);
         gameData = {
           seed: seed,
           guesses: [],
-          answers: generateWordsFromSeed(seed),
+          answers,
           current: "",
+          states: generateAllGamesBoxStates([], answers),
+          answersCorrect: [-1, -1, -1, -1],
         };
       }
     } catch (e) {
       const seed = mode === "daily" ? currentDailySeed : date.getTime();
+      const answers = generateWordsFromSeed(seed);
       gameData = {
         seed: seed,
         guesses: [],
-        answers: generateWordsFromSeed(seed),
+        answers,
         current: "",
+        states: generateAllGamesBoxStates([], answers),
+        answersCorrect: [-1, -1, -1, -1],
       };
     }
     gamesData[mode] = gameData;
@@ -119,8 +198,8 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
   const isGameComplete = (mode: GameMode) => {
     return (
       state[mode].guesses.length === GAME_ROWS ||
-      state[mode].answers.filter((answer) =>
-        state[mode].guesses.includes(answer)
+      state[mode].answers.filter(
+        (answer) => state[mode].guesses.indexOf(answer) >= 0
       ).length === 4
     );
   };
@@ -151,8 +230,19 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
             ALLOWED_SET.has(s[mode].current)) &&
           !isGameComplete(mode)
         ) {
-          s[mode].guesses.push(s[mode].current);
+          const guess = s[mode].current;
+          s[mode].guesses.push(guess);
           s[mode].current = "";
+          for (let i = 0; i < NUM_GAMES; i++) {
+            if (s[mode].guesses.indexOf(s[mode].answers[i]) === -1) {
+              s[mode].states[i].push(
+                generateBoxStatesFromGuess(guess, s[mode].answers[i])
+              );
+            }
+            s[mode].answersCorrect[i] = s[mode].guesses.indexOf(
+              s[mode].answers[i]
+            );
+          }
         }
       })
     );
@@ -168,7 +258,7 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
           submitCurrent(mode);
         } else {
           const key = e.key.toLowerCase();
-          if ("abcdefghijklmnopqrstuvwxyz".indexOf(key) == -1) return;
+          if (ALPHABET.indexOf(key) == -1) return;
           addLetter(mode, key);
         }
       },

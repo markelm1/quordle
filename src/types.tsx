@@ -4,6 +4,8 @@ export type GameData = {
   guesses: string[];
   answers: string[];
   current: string;
+  states: BoxState[][][];
+  answersCorrect: number[];
 };
 export type GamesData = { [key in GameMode]: GameData };
 export type GamesDataProviderFuncs = {
@@ -14,3 +16,5 @@ export type GamesDataProviderFuncs = {
   submitCurrent(mode: GameMode): void;
   resetDailyIfOld(): void;
 };
+export type BoxState = "correct" | "diff" | "none";
+export type ShareType = "share" | "image" | "clipboard";

@@ -2,7 +2,10 @@ import { NavLink } from "solid-app-router";
 import { Component, createMemo } from "solid-js";
 import { useGamesDataContext } from "./GameDataProvider";
 
-const Header: Component = () => {
+type HeaderProps = {
+  onOpenTutorial: () => void;
+};
+const Header: Component<HeaderProps> = (props) => {
   const [gamesData, gamesDataFuncs] = useGamesDataContext();
 
   const dailySeed = createMemo(() => {
@@ -40,6 +43,7 @@ const Header: Component = () => {
           <button
             type="button"
             class="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white"
+            onClick={props.onOpenTutorial}
             id="help-button"
           >
             <svg

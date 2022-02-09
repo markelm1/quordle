@@ -1,10 +1,32 @@
 import { Component, createMemo } from "solid-js";
 import { ALLOWED_SET, ANSWERS_SET, NUM_GAMES_X } from "./constants";
 import { useGamesDataContext } from "./GameDataProvider";
-import { GameMode } from "./types";
-import { indexOfAll } from "./utils";
+import { BoxState, GameMode } from "./types";
 
-type BoxState = "correct" | "diff" | "none" | "invalid";
+type GameTileState = BoxState | "invalid";
+
+type GameTileRendererProps = {
+  gameRow: number;
+  gameCol: number;
+  state: GameTileState;
+  letter: string;
+};
+export const GameTileRenderer: Component<GameTileRendererProps> = (props) => {
+  return (
+    <div
+      class="quordle-box w-[20%]"
+      classList={{
+        "border-t-[1px]": props.gameRow === 0,
+        "border-l-[1px]": props.gameCol === 0,
+        "text-black bg-box-correct": props.state === "correct",
+        "text-black bg-box-diff": props.state === "diff",
+        "text-red-500": props.state === "invalid",
+      }}
+    >
+      <div class="quordle-box-content" textContent={props.letter} />
+    </div>
+  );
+};
 
 type GameTileProps = {
   mode: GameMode;
@@ -48,38 +70,14 @@ const GameTile: Component<GameTileProps> = (props) => {
     return letter.toUpperCase();
   });
 
-  const boxState = createMemo((): BoxState => {
+  const gameTileState = createMemo((): GameTileState => {
     const gameData = gamesData[props.mode];
     const guesses = gameData.guesses;
-    const answers = gameData.answers;
+    const states = gameData.states;
     const current = gameData.current;
     if (shouldRenderLetter()) {
       if (props.gameRow < guesses.length) {
-        const guess = guesses[props.gameRow];
-        const guessLetter = guess[props.gameCol];
-        const answer = answers[gameIndex];
-        const answerLetter = answer[props.gameCol];
-        if (guessLetter === answerLetter) {
-          return "correct";
-        } else if (answer.indexOf(guessLetter) > 0) {
-          const allOtherIndicies = indexOfAll(answer, guessLetter);
-          let hasLetterCorrectElsewhere = false;
-          let hasLetterIncorrectElsewhere = false;
-          for (const index of allOtherIndicies) {
-            if (index === props.gameCol) continue;
-            if (answer[index] === guess[index]) {
-              hasLetterCorrectElsewhere = true;
-            } else if (
-              answer[index] !== guess[index] &&
-              answer[index] === guessLetter
-            ) {
-              hasLetterIncorrectElsewhere = true;
-            }
-          }
-          return hasLetterCorrectElsewhere && !hasLetterIncorrectElsewhere
-            ? "none"
-            : "diff";
-        }
+        return states[gameIndex][props.gameRow]?.[props.gameCol] || "none";
       } else if (
         props.gameRow === guesses.length &&
         current.length === 5 &&
@@ -93,18 +91,12 @@ const GameTile: Component<GameTileProps> = (props) => {
   });
 
   return (
-    <div
-      class="quordle-box w-[20%]"
-      classList={{
-        "border-t-[1px]": props.gameRow === 0,
-        "border-l-[1px]": props.gameCol === 0,
-        "text-black bg-box-correct": boxState() === "correct",
-        "text-black bg-box-diff": boxState() === "diff",
-        "text-red-500": boxState() === "invalid",
-      }}
-    >
-      <div class="quordle-box-content" textContent={letter()} />
-    </div>
+    <GameTileRenderer
+      state={gameTileState()}
+      letter={letter()}
+      gameRow={props.gameRow}
+      gameCol={props.gameCol}
+    />
   );
 };
 

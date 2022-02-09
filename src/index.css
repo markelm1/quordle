@@ -16,6 +16,12 @@ code {
     monospace;
 }
 
+.quordle-key {
+  background-size: 50% 50%;
+  background-position: 0% 0%, 0% 100%, 100% 0%, 100% 100%;
+  background-repeat: no-repeat;
+}
+
 @layer components {
   body {
     @apply bg-gray-800;
@@ -30,6 +36,6 @@ code {
     @apply text-white border-white border-r-[1px] border-b-[1px] p-0 aspect-square relative select-none;
   }
   .quordle-box-content {
-    @apply absolute text-3xl left-0 top-0 bottom-0 right-0 flex items-center justify-center;
+    @apply absolute left-0 top-0 bottom-0 right-0 flex items-center justify-center;
   }
 }
