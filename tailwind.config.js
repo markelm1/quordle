@@ -4,7 +4,7 @@ module.exports = {
     extend: {
       colors: {
         "box-diff": "#ffcc00",
-        "box-success": "#00cc88",
+        "box-correct": "#00cc88",
         "box-none": "#919191",
       },
     },

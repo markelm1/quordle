@@ -2,6 +2,9 @@ import { Component, createMemo } from "solid-js";
 import { ALLOWED_SET, ANSWERS_SET, NUM_GAMES_X } from "./constants";
 import { useGamesDataContext } from "./GameDataProvider";
 import { GameMode } from "./types";
+import { indexOfAll } from "./utils";
+
+type BoxState = "correct" | "diff" | "none" | "invalid";
 
 type GameTileProps = {
   mode: GameMode;
@@ -45,50 +48,62 @@ const GameTile: Component<GameTileProps> = (props) => {
     return letter.toUpperCase();
   });
 
-  const boxClasses = createMemo(() => {
+  const boxState = createMemo((): BoxState => {
     const gameData = gamesData[props.mode];
     const guesses = gameData.guesses;
     const answers = gameData.answers;
     const current = gameData.current;
-    const classes = [];
     if (shouldRenderLetter()) {
       if (props.gameRow < guesses.length) {
-        if (
-          guesses[props.gameRow][props.gameCol] ===
-          answers[gameIndex][props.gameCol]
-        ) {
-          classes.push("box-success");
-        } else if (
-          answers[gameIndex].indexOf(guesses[props.gameRow][props.gameCol]) !==
-          -1
-        ) {
-          classes.push("box-diff");
+        const guess = guesses[props.gameRow];
+        const guessLetter = guess[props.gameCol];
+        const answer = answers[gameIndex];
+        const answerLetter = answer[props.gameCol];
+        if (guessLetter === answerLetter) {
+          return "correct";
+        } else if (answer.indexOf(guessLetter) > 0) {
+          const allOtherIndicies = indexOfAll(answer, guessLetter);
+          let hasLetterCorrectElsewhere = false;
+          let hasLetterIncorrectElsewhere = false;
+          for (const index of allOtherIndicies) {
+            if (index === props.gameCol) continue;
+            if (answer[index] === guess[index]) {
+              hasLetterCorrectElsewhere = true;
+            } else if (
+              answer[index] !== guess[index] &&
+              answer[index] === guessLetter
+            ) {
+              hasLetterIncorrectElsewhere = true;
+            }
+          }
+          return hasLetterCorrectElsewhere && !hasLetterIncorrectElsewhere
+            ? "none"
+            : "diff";
         }
-      }
-      if (
+      } else if (
         props.gameRow === guesses.length &&
         current.length === 5 &&
         !ALLOWED_SET.has(current) &&
         !ANSWERS_SET.has(current)
       ) {
-        classes.push("text-invalid");
+        return "invalid";
       }
     }
-    return classes.join(" ");
+    return "none";
   });
 
   return (
     <div
-      class={`box pb-[20%]  ${props.gameRow === 0 ? "border-t-[1px]" : ""} ${
-        props.gameCol === 0 ? "border-l-[1px]" : ""
-      } ${boxClasses()}`}
+      class="quordle-box w-[20%]"
+      classList={{
+        "border-t-[1px]": props.gameRow === 0,
+        "border-l-[1px]": props.gameCol === 0,
+        "text-black bg-box-correct": boxState() === "correct",
+        "text-black bg-box-diff": boxState() === "diff",
+        "text-red-500": boxState() === "invalid",
+      }}
     >
-      <div
-        class="box-content"
-        id={`box${gameIndex + 1},${props.gameRow + 1},${props.gameCol + 1}`}
-      >
-        {letter()}
-      </div>
+      <div class="quordle-box-content" textContent={letter()} />
     </div>
   );
 };

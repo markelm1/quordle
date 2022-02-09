@@ -1,42 +1,40 @@
 import type { Component } from "solid-js";
-import { BOX_SIZE, KEYBOARD_KEYS } from "./constants";
+import { KEYBOARD_KEYS } from "./constants";
 import { useGamesDataContext } from "./GameDataProvider";
 import { GameMode } from "./types";
 
-const KEYBOARD_WIDTH = BOX_SIZE * 10;
+const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
 type KeyboardProps = {
   mode: GameMode;
 };
 const Keyboard: Component<KeyboardProps> = (props) => {
-  const { mode } = props;
   const [gamesData, gamesDataFuncs] = useGamesDataContext();
   return (
-    <div id="keyboard" class="w-full flex-col">
+    <div class="max-w-[550px] m-auto w-full flex-col">
       {KEYBOARD_KEYS.map((row, y) => (
         <div class="flex w-full">
           {row.map((key, x) => (
             <div
-              class={`box pb-[10%] key ${y === 0 ? "border-t-[1px]" : ""} ${
-                x === 0 ? "border-l-[1px]" : ""
-              } ${key === "enter3" ? "border-b-transparent" : ""} ${
-                key === "enter1" ? "border-r-transparent" : ""
-              }`}
-              id={key.toLocaleLowerCase()}
+              class="quordle-box w-[10%]"
+              classList={{
+                "border-l-[1px]": x === 0,
+                "border-t-[1px]": y === 0,
+                "border-b-transparent": key === "enter3",
+                "border-r-transparent": key === "enter1",
+              }}
             >
               <div
-                class="box-content"
+                class="quordle-box-content"
                 onClick={() => {
                   gamesDataFuncs.sendKey(
-                    mode,
+                    props.mode,
                     new KeyboardEvent("keydown", {
                       keyCode: key.startsWith("enter")
                         ? 13
                         : key === "bs"
                         ? 8
-                        : "abcdefghijklmnopqrstuvwxyz".indexOf(
-                            key.toLocaleLowerCase()
-                          ) + 65,
+                        : ALPHABET.indexOf(key.toLocaleLowerCase()) + 65,
                       key: key.startsWith("enter")
                         ? "Enter"
                         : key === "bs"
@@ -45,15 +43,16 @@ const Keyboard: Component<KeyboardProps> = (props) => {
                     })
                   );
                 }}
-              >
-                {key === "enter2"
-                  ? "\u23CE"
-                  : key === "bs"
-                  ? "\u232B"
-                  : key.startsWith("enter")
-                  ? ""
-                  : key}
-              </div>
+                textContent={
+                  key === "enter2"
+                    ? "\u23CE"
+                    : key === "bs"
+                    ? "\u232B"
+                    : key.startsWith("enter")
+                    ? ""
+                    : key
+                }
+              />
             </div>
           ))}
         </div>

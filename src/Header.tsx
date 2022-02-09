@@ -16,10 +16,20 @@ const Header: Component = () => {
       <div class="flex-1">
         <div class="">
           <div class="flex ml-3">
-            <NavLink href="/" activeClass="nav-active" class="nav" end>
+            <NavLink
+              href="/"
+              activeClass="quordle-nav-active"
+              class="quordle-nav"
+              end
+            >
               Daily #{dailySeed}
             </NavLink>
-            <NavLink href="/practice" activeClass="nav-active" class="nav" end>
+            <NavLink
+              href="/practice"
+              activeClass="quordle-nav-active"
+              class="quordle-nav"
+              end
+            >
               Practice
             </NavLink>
           </div>
