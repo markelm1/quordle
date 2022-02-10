@@ -25,7 +25,7 @@ import {
   GamesData,
   GamesDataProviderFuncs,
 } from "./types";
-import { indexOfAll } from "./utils";
+import { gtagWrap, indexOfAll } from "./utils";
 
 export const generateBoxStatesFromGuess = (
   guess: string,
@@ -145,6 +145,10 @@ function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
             guessesArr.indexOf(answers[i])
           ),
         };
+        gtagWrap("event", "restore", {
+          mode: mode,
+          daily_seed: mode === "daily" ? lastSeed : undefined,
+        });
       } else {
         const seed = mode === "daily" ? currentDailySeed : date.getTime();
         const answers = generateWordsFromSeed(seed);
@@ -156,6 +160,10 @@ function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
           states: generateAllGamesBoxStates([], answers),
           answersCorrect: [-1, -1, -1, -1],
         };
+        gtagWrap("event", "start", {
+          mode: mode,
+          daily_seed: mode === "daily" ? seed : undefined,
+        });
       }
     } catch (e) {
       const seed = mode === "daily" ? currentDailySeed : date.getTime();
@@ -168,6 +176,10 @@ function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
         states: generateAllGamesBoxStates([], answers),
         answersCorrect: [-1, -1, -1, -1],
       };
+      gtagWrap("event", "start", {
+        mode: mode,
+        daily_seed: mode === "daily" ? seed : undefined,
+      });
     }
     gamesData[mode] = gameData;
   });
@@ -247,6 +259,31 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
             s[mode].answersCorrect[i] = s[mode].guesses.indexOf(
               s[mode].answers[i]
             );
+          }
+          gtagWrap("event", "guess", {
+            mode: mode,
+            daily_seed: mode === "daily" ? s[mode].seed : undefined,
+            word: guess,
+          });
+          if (isGameComplete(mode)) {
+            const totalCorrect = s[mode].answersCorrect.reduce(
+              (prev, correct) => (prev += correct >= 0 ? 1 : 0),
+              0
+            );
+            if (totalCorrect === 4) {
+              gtagWrap("event", "win", {
+                mode: mode,
+                daily_seed: mode === "daily" ? s[mode].seed : undefined,
+                guesses: s[mode].guesses,
+              });
+            } else {
+              gtagWrap("event", "loss", {
+                mode: mode,
+                daily_seed: mode === "daily" ? s[mode].seed : undefined,
+                guesses: s[mode].guesses,
+                total_correct: totalCorrect,
+              });
+            }
           }
         }
       })

@@ -1,7 +1,7 @@
-import { Component, createMemo, JSX } from "solid-js";
+import { Component, JSX } from "solid-js";
 import { useGamesDataContext } from "./GameDataProvider";
 import { ClipboardCopyIcon, ShareIcon, TwitterIcon } from "./icons";
-import { do_share, get_num_emoji } from "./share";
+import { getNumEmoji, shareGame } from "./share";
 import { GameMode } from "./types";
 
 type ShareButtonsProps = {
@@ -26,13 +26,6 @@ type GameShareProps = {
 const GameShare: Component<GameShareProps> = (props) => {
   const [gamesData, gamesDataFuncs] = useGamesDataContext();
 
-  const numWordsCorrect = createMemo(() =>
-    gamesData[props.mode].answersCorrect.reduce(
-      (prev, correct) => (prev += correct >= 0 ? 1 : 0),
-      0
-    )
-  );
-
   return (
     <div class="flex flex-col py-4 rounded-t-lg text-center bg-gray-900">
       <div class="text-2xl flex">
@@ -47,12 +40,12 @@ const GameShare: Component<GameShareProps> = (props) => {
             {gamesData[props.mode].answers[0].toLocaleUpperCase()}
           </span>
           <span class="font-[Arial]">
-            {get_num_emoji(gamesData[props.mode].answersCorrect[0])}
+            {getNumEmoji(gamesData[props.mode].answersCorrect[0])}
           </span>
         </div>
         <div class="flex flex-1 justify-start items-center">
           <span class="font-[Arial]">
-            {get_num_emoji(gamesData[props.mode].answersCorrect[1])}
+            {getNumEmoji(gamesData[props.mode].answersCorrect[1])}
           </span>
           <span
             class="ml-4"
@@ -65,7 +58,7 @@ const GameShare: Component<GameShareProps> = (props) => {
           </span>
         </div>
       </div>
-      <div class="text-2xl flex mb-2">
+      <div class="text-2xl flex">
         <div class="flex flex-1 justify-end items-center">
           <span
             class="mr-4"
@@ -77,12 +70,12 @@ const GameShare: Component<GameShareProps> = (props) => {
             {gamesData[props.mode].answers[2].toLocaleUpperCase()}
           </span>
           <span class="font-[Arial]">
-            {get_num_emoji(gamesData[props.mode].answersCorrect[2])}
+            {getNumEmoji(gamesData[props.mode].answersCorrect[2])}
           </span>
         </div>
         <div class="flex flex-1 justify-start items-center">
           <span class="font-[Arial]">
-            {get_num_emoji(gamesData[props.mode].answersCorrect[3])}
+            {getNumEmoji(gamesData[props.mode].answersCorrect[3])}
           </span>
           <span
             class="ml-4"
@@ -95,41 +88,48 @@ const GameShare: Component<GameShareProps> = (props) => {
           </span>
         </div>
       </div>
-      <div class="flex items-center justify-center mb-2">
-        <ShareButton
-          onClick={() => {
-            do_share(props.mode, gamesData[props.mode], "share");
-          }}
-        >
-          <div class="flex items-center justify-center">
-            <ShareIcon />
-            <div class="ml-2">Share</div>
+      {/* @ts-ignore */}
+      {navigator.share && (
+        <>
+          <div class="flex items-center justify-center mt-2">
+            <ShareButton
+              onClick={() => {
+                shareGame(props.mode, gamesData[props.mode], "share");
+              }}
+            >
+              <div class="flex items-center justify-center">
+                <ShareIcon />
+                <div class="ml-2">Share</div>
+              </div>
+            </ShareButton>
+            <ShareButton
+              class="ml-2"
+              onClick={() => {
+                shareGame(props.mode, gamesData[props.mode], "image");
+              }}
+            >
+              <div class="flex items-center justify-center">
+                <TwitterIcon />
+                <div class="ml-2">Share as Image</div>
+              </div>
+            </ShareButton>
           </div>
-        </ShareButton>
-        <ShareButton
-          class="ml-2"
-          onClick={() => {
-            do_share(props.mode, gamesData[props.mode], "image");
-          }}
-        >
-          <div class="flex items-center justify-center">
-            <TwitterIcon />
-            <div class="ml-2">Share as Image</div>
-          </div>
-        </ShareButton>
-      </div>
-      <div class="flex items-center justify-center">
-        <ShareButton
-          onClick={() => {
-            do_share(props.mode, gamesData[props.mode], "clipboard");
-          }}
-        >
-          <div class="flex items-center justify-center">
-            <ClipboardCopyIcon />
-            <div class="ml-2">Copy to Clipboard</div>
-          </div>
-        </ShareButton>
-      </div>
+        </>
+      )}
+      {navigator.clipboard && (
+        <div class="flex items-center justify-center mt-2">
+          <ShareButton
+            onClick={() => {
+              shareGame(props.mode, gamesData[props.mode], "clipboard");
+            }}
+          >
+            <div class="flex items-center justify-center">
+              <ClipboardCopyIcon />
+              <div class="ml-2">Copy to Clipboard</div>
+            </div>
+          </ShareButton>
+        </div>
+      )}
     </div>
   );
 };

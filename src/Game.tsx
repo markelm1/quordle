@@ -16,6 +16,7 @@ import Header from "./Header";
 import Keyboard from "./Keyboard";
 import Tutorial from "./Tutorial";
 import { GameMode } from "./types";
+import { gtagWrap } from "./utils";
 
 const NUM_GAMES_X_ARR = [...Array(NUM_GAMES_X).keys()];
 const NUM_GAMES_Y_ARR = [...Array(NUM_GAMES_Y).keys()];
@@ -81,7 +82,12 @@ const Game: Component<GameProps> = (props) => {
         "h-[calc(100%-25px)] bottom-[25px]": IS_IN_WEB_APP_IOS,
       }}
     >
-      <Header onOpenTutorial={() => setSearchParams({ tutorial: true })} />
+      <Header
+        onOpenTutorial={() => {
+          gtagWrap("event", "tutorial");
+          setSearchParams({ tutorial: true });
+        }}
+      />
       <div
         class="max-w-[550px] m-auto w-full"
         style={{
