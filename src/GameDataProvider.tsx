@@ -13,6 +13,7 @@ import {
   ANSWERS,
   ANSWERS_SET,
   GAME_COLS,
+  GAME_PERIOD_MS,
   GAME_ROWS,
   NUM_GAMES,
   START_DATE,
@@ -36,7 +37,7 @@ export const generateBoxStatesFromGuess = (
     const answerLetter = answer[i];
     if (guessLetter === answerLetter) {
       states.push("correct");
-    } else if (answer.indexOf(guessLetter) > 0) {
+    } else if (answer.indexOf(guessLetter) >= 0) {
       const allOtherIndicies = indexOfAll(answer, guessLetter);
       let hasLetterCorrectElsewhere = false;
       let hasLetterIncorrectElsewhere = false;
@@ -107,7 +108,7 @@ export const generateWordsFromSeed = (seed: number): string[] => {
 function createLocalStore(): [Store<GamesData>, SetStoreFunction<GamesData>] {
   const date = new Date();
   const currentDailySeed =
-    ((date.getTime() - START_DATE.getTime()) / (1000 * 3600 * 24)) >> 0;
+    ((date.getTime() - START_DATE.getTime()) / GAME_PERIOD_MS) >> 0;
   const gamesData: GamesData = {
     daily: {
       seed: 0,
@@ -234,7 +235,11 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
           s[mode].guesses.push(guess);
           s[mode].current = "";
           for (let i = 0; i < NUM_GAMES; i++) {
-            if (s[mode].guesses.indexOf(s[mode].answers[i]) === -1) {
+            const answerIndex = s[mode].guesses.indexOf(s[mode].answers[i]);
+            if (
+              answerIndex === -1 ||
+              answerIndex === s[mode].guesses.length - 1
+            ) {
               s[mode].states[i].push(
                 generateBoxStatesFromGuess(guess, s[mode].answers[i])
               );
@@ -269,7 +274,7 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
       resetDailyIfOld() {
         const date = new Date();
         const currentDailySeed =
-          ((date.getTime() - START_DATE.getTime()) / (1000 * 3600 * 24)) >> 0;
+          ((date.getTime() - START_DATE.getTime()) / GAME_PERIOD_MS) >> 0;
         if (currentDailySeed !== state.daily.seed) {
           setState(
             produce((s) => {
@@ -277,16 +282,31 @@ const GamesDataProvider: Component<GamesDataProviderProps> = (props) => {
               s.daily.guesses = [];
               s.daily.answers = generateWordsFromSeed(currentDailySeed);
               s.daily.current = "";
+              s.daily.states = [[], [], [], []];
+              s.daily.answersCorrect = [-1, -1, -1, -1];
             })
           );
         }
+      },
+      resetFree() {
+        const newSeed = new Date().getTime();
+        setState(
+          produce((s) => {
+            s.free.seed = newSeed;
+            s.free.guesses = [];
+            s.free.answers = generateWordsFromSeed(newSeed);
+            s.free.current = "";
+            s.free.states = [[], [], [], []];
+            s.free.answersCorrect = [-1, -1, -1, -1];
+          })
+        );
       },
     },
   ];
 
   setInterval(() => {
     store[1].resetDailyIfOld();
-  }, 5000);
+  }, 1000);
 
   return (
     <GamesDataContext.Provider value={store}>

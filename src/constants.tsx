@@ -1,12 +1,22 @@
+import { RelativeTimeFormatUnit } from "./types";
+
 export const NUM_GAMES_X = 2;
 export const NUM_GAMES_Y = 2;
 export const NUM_GAMES = NUM_GAMES_X * NUM_GAMES_Y;
 export const GAME_ROWS = 9;
 export const GAME_COLS = 5;
 
-export const START_DATE = new Date("01/24/2022");
+export const TimeUnits: { [unit in RelativeTimeFormatUnit]: number } = {
+  year: 24 * 60 * 60 * 1000 * 365,
+  month: (24 * 60 * 60 * 1000 * 365) / 12,
+  day: 24 * 60 * 60 * 1000,
+  hour: 60 * 60 * 1000,
+  minute: 60 * 1000,
+  second: 1000,
+};
 
-export const BOX_SIZE = 50;
+export const START_DATE = new Date("01/24/2022");
+export const GAME_PERIOD_MS = TimeUnits.day;
 
 export const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 

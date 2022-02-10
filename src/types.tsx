@@ -1,3 +1,10 @@
+export type RelativeTimeFormatUnit =
+  | "year"
+  | "month"
+  | "day"
+  | "hour"
+  | "minute"
+  | "second";
 export type GameMode = "daily" | "free";
 export type GameData = {
   seed: number;
@@ -15,6 +22,7 @@ export type GamesDataProviderFuncs = {
   deleteLetter(mode: GameMode): void;
   submitCurrent(mode: GameMode): void;
   resetDailyIfOld(): void;
+  resetFree(): void;
 };
 export type BoxState = "correct" | "diff" | "none";
 export type ShareType = "share" | "image" | "clipboard";

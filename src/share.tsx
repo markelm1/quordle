@@ -2,7 +2,7 @@ import { DeepReadonly } from "solid-js/store";
 import { GAME_COLS, GAME_ROWS } from "./constants";
 import { BoxState, GameData, GameMode, ShareType } from "./types";
 
-function get_num_emoji(num: number) {
+export const get_num_emoji = (num: number) => {
   if (num < 0) {
     return "\uD83D\uDFE5";
   } else if (num === 0) {
@@ -24,7 +24,7 @@ function get_num_emoji(num: number) {
   } else if (num === 8) {
     return "9️⃣";
   }
-}
+};
 
 const get_emoji_row = (states: readonly BoxState[] | undefined) => {
   let emojis = "";

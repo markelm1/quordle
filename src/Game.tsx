@@ -2,21 +2,20 @@ import createResizeObserver from "@solid-primitives/resize-observer";
 import { useSearchParams } from "solid-app-router";
 import { Component, createMemo, createSignal, onCleanup } from "solid-js";
 import {
-  BOX_SIZE,
   GAME_COLS,
   GAME_ROWS,
+  IS_IN_WEB_APP_IOS,
   NUM_GAMES_X,
   NUM_GAMES_Y,
 } from "./constants";
+import GameCompleteBanner from "./GameCompleteBanner";
 import { useGamesDataContext } from "./GameDataProvider";
+import GameShare from "./GameShare";
 import GameSquare from "./GameTile";
 import Header from "./Header";
 import Keyboard from "./Keyboard";
-import ScoreResults from "./ScoreResults";
 import Tutorial from "./Tutorial";
 import { GameMode } from "./types";
-
-export const GAME_WIDTH = BOX_SIZE * GAME_COLS * NUM_GAMES_X + 4;
 
 const NUM_GAMES_X_ARR = [...Array(NUM_GAMES_X).keys()];
 const NUM_GAMES_Y_ARR = [...Array(NUM_GAMES_Y).keys()];
@@ -75,8 +74,24 @@ const Game: Component<GameProps> = (props) => {
   });
 
   return (
-    <div class="w-full h-full absolute flex flex-col overflow-hidden">
+    <div
+      class="w-full absolute flex flex-col overflow-hidden"
+      classList={{
+        "h-full": !IS_IN_WEB_APP_IOS,
+        "h-[calc(100%-25px)] bottom-[25px]": IS_IN_WEB_APP_IOS,
+      }}
+    >
       <Header onOpenTutorial={() => setSearchParams({ tutorial: true })} />
+      <div
+        class="max-w-[550px] m-auto w-full"
+        style={{
+          "font-size": fontSize() + "px",
+        }}
+      >
+        {gamesDataFuncs.isGameComplete(props.mode) && (
+          <GameCompleteBanner mode={props.mode} />
+        )}
+      </div>
       <div
         class="max-w-[550px] m-auto w-full flex-auto"
         classList={{
@@ -105,7 +120,7 @@ const Game: Component<GameProps> = (props) => {
         }}
       >
         {gamesDataFuncs.isGameComplete(props.mode) ? (
-          <ScoreResults mode={props.mode} />
+          <GameShare mode={props.mode} />
         ) : (
           <Keyboard mode={props.mode} />
         )}
