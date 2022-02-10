@@ -85,7 +85,7 @@ const Key: Component<KeyProps> = (props) => {
   });
 
   return (
-    <div
+    <button
       class="quordle-box quordle-key w-[10%]"
       classList={{
         "border-l-[1px]": props.x === 0,
@@ -94,26 +94,27 @@ const Key: Component<KeyProps> = (props) => {
         "border-r-transparent": props.key === "enter1",
       }}
       style={keyStyle()}
+      onClick={(e) => {
+        e.preventDefault();
+        gamesDataFuncs.sendKey(
+          props.mode,
+          new KeyboardEvent("keydown", {
+            keyCode: props.key.startsWith("enter")
+              ? 13
+              : props.key === "bs"
+              ? 8
+              : ALPHABET.indexOf(props.key.toLocaleLowerCase()) + 65,
+            key: props.key.startsWith("enter")
+              ? "Enter"
+              : props.key === "bs"
+              ? "Backspace"
+              : props.key.toLocaleLowerCase(),
+          })
+        );
+      }}
     >
       <div
         class="quordle-box-content"
-        onClick={() => {
-          gamesDataFuncs.sendKey(
-            props.mode,
-            new KeyboardEvent("keydown", {
-              keyCode: props.key.startsWith("enter")
-                ? 13
-                : props.key === "bs"
-                ? 8
-                : ALPHABET.indexOf(props.key.toLocaleLowerCase()) + 65,
-              key: props.key.startsWith("enter")
-                ? "Enter"
-                : props.key === "bs"
-                ? "Backspace"
-                : props.key.toLocaleLowerCase(),
-            })
-          );
-        }}
         textContent={
           props.key === "enter2"
             ? "\u23CE"
@@ -124,7 +125,7 @@ const Key: Component<KeyProps> = (props) => {
             : props.key
         }
       />
-    </div>
+    </button>
   );
 };
 

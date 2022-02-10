@@ -7,7 +7,7 @@ const App: Component = () => {
   const context = createMemo(() => useContext(GamesDataContext));
   return context() ? (
     <Routes>
-      <Route path="/dev" element={<Game mode="daily" />} />
+      <Route path="/dev/" element={<Game mode="daily" />} />
       <Route path="/dev/practice" element={<Game mode="free" />} />
     </Routes>
   ) : null;

@@ -17,6 +17,7 @@ code {
 }
 
 .quordle-key {
+  touch-action: manipulation;
   background-size: 50% 50%;
   background-position: 0% 0%, 0% 100%, 100% 0%, 100% 100%;
   background-repeat: no-repeat;
@@ -33,7 +34,7 @@ code {
     @apply bg-gray-700 text-white hover:bg-gray-700 hover:text-white !important;
   }
   .quordle-box {
-    @apply text-white border-white border-r-[1px] border-b-[1px] p-0 aspect-square relative select-none touch-manipulation;
+    @apply text-white border-white border-r-[1px] border-b-[1px] p-0 aspect-square relative select-none;
   }
   .quordle-box-content {
     @apply absolute left-0 top-0 bottom-0 right-0 flex items-center justify-center;
