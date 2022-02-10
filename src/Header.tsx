@@ -22,7 +22,7 @@ const Header: Component<HeaderProps> = (props) => {
         <div class="">
           <div class="flex ml-3">
             <NavLink
-              href="/dev/"
+              href="/"
               activeClass="quordle-nav-active"
               class="quordle-nav"
               end
@@ -30,7 +30,7 @@ const Header: Component<HeaderProps> = (props) => {
               Daily #{dailySeed}
             </NavLink>
             <NavLink
-              href="/dev/practice"
+              href="/practice"
               activeClass="quordle-nav-active"
               class="quordle-nav"
               end

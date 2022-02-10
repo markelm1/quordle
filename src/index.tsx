@@ -1,4 +1,4 @@
-import { Router } from "solid-app-router";
+import { hashIntegration, Router } from "solid-app-router";
 import { render } from "solid-js/web";
 import App from "./App";
 import GamesDataProvider from "./GameDataProvider";
@@ -6,7 +6,7 @@ import "./index.css";
 
 render(
   () => (
-    <Router>
+    <Router source={hashIntegration()}>
       <GamesDataProvider>
         <App />
       </GamesDataProvider>
