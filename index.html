@@ -63,6 +63,17 @@
 
       gtag('config', 'G-JE1FCTKHM9');
     </script>
+    <script
+      src="https://js.sentry-cdn.com/cd8139814dd64a07af2a72fe40bed481.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      Sentry.onLoad(function() {
+        Sentry.init({
+          dsn: "https://cd8139814dd64a07af2a72fe40bed481@o1140342.ingest.sentry.io/6197424"
+        });
+      });
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
