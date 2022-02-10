@@ -22,7 +22,7 @@ const Header: Component<HeaderProps> = (props) => {
         <div class="">
           <div class="flex ml-3">
             <NavLink
-              href="/dev"
+              href="/dev/"
               activeClass="quordle-nav-active"
               class="quordle-nav"
               end
