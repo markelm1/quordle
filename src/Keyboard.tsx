@@ -86,7 +86,7 @@ const Key: Component<KeyProps> = (props) => {
 
   return (
     <div
-      class="quordle-box quordle-key w-[10%] hover:"
+      class="quordle-box quordle-key w-[10%]"
       classList={{
         "border-l-[1px]": props.x === 0,
         "border-t-[1px]": props.y === 0,
