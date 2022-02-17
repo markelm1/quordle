@@ -1,0 +1,57 @@
+Each guess must be a valid 5 letter word. Hit the enter button to submit.
+After each guess, the color of the tiles will change to show how close
+your guess was to the word.
+
+Saiakera bakoitzean 5 letrako hitz baliodun bat osatu behar da.
+Enter botoia sakatu zuzentzeko. Saiakera bakoitzaren ostean, letra-kutxen kolorea
+aldatu egingo da hitz zuzenera noraino gerturatu zaren ikusi ahal izateko.
+
+
+The letter C is in the word and in the correct spot.
+
+Hitzak C letra dauka eta posizio berean dago.
+
+The letter A is in the word but in the wrong spot.
+
+Hitzak A letra dauka baina beste posizio batean.
+
+The letters C, O, M, F, Y are not in the word in any spot. When you type a
+guess in QUORDLE, you will guess that word for all four words that you are
+solving. All four words you are solving will be different.
+
+C, O, M, F, Y letrak ez daude hitzean. QUORDLEn saiakera bat egiten duzun aldiro,
+asmatu beharreko hitz guztientzat erabiliko da saiakera hori.
+Aurkitu beharreko 4 hitzak desberdinak dira.
+
+
+<li>The top left word has none of the letters.</li>
+<li>
+The top right word has the R in the wrong spot and the D in the correct
+spot.
+</li>
+<li>The bottom left word has the L in the wrong spot.</li>
+<li>
+The bottom right word has the O in the right spot and the D in the wrong
+spot.
+</li>
+
+<li>Goi-ezkerreko hitzak ez dauka letretako bat ere.</li>
+<li>
+Goi-eskumako hitzak R letra beste posizio batean dauka, eta D letra posizio zuzenean.
+</li>
+<li>Behe-ezkerreko hitzak L letra beste posizio batean dauka.</li>
+<li>
+Behe-eskumako hitzak O letra posizio zuzenean dauka, eta D letra beste posizio batean.
+</li>
+
+You have 9 guesses to get all 4 words correct. Good luck!
+
+9 saiakera dituzu 4 hitzak asmatzeko. Zorte on!
+
+A new QUORDLE will be available each day!
+
+QUORDLE berri bat eskuragarri egunero!
+
+Created by Freddie Meyer
+
+Freddie Meyer-ek sortua

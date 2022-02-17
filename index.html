@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="eu">
   <head>
     <meta charset="UTF-8" />
     <title>Quordle</title>
@@ -18,7 +18,7 @@
     />
 
     <!-- FB Meta Tags -->
-    <meta property="og:url" content="https://www.quordle.com" />
+    <meta property="og:url" content="https://www.quordle.eus" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Quordle" />
     <meta
@@ -27,14 +27,14 @@
     />
     <meta
       property="og:image"
-      content="https://www.quordle.com/quordle-banner-1200.png"
+      content="https://www.quordle.eus/quordle-banner-1200.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content="quordle.com" />
+    <meta property="twitter:domain" content="quordle.eus" />
 
     <meta name="theme-color" content="#111827" />
     <meta name="color-scheme" content="dark" />
@@ -70,7 +70,7 @@
           return this.substring(this_len - search.length, this_len) === search;
         };
       }
-      var quordleInHost = window.location && window.location.host && window.location.host.endsWith("quordle.com")
+      var quordleInHost = window.location && window.location.host && window.location.host.endsWith("quordle.eus")
       if (window.Sentry) {
         Sentry.onLoad(function() {
           Sentry.init({
@@ -81,12 +81,12 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="/assets/index.8e9a6cc8.js"></script>
-    <link rel="modulepreload" href="/assets/vendor.92a689d9.js">
-    <link rel="stylesheet" href="/assets/index.66aa7cec.css">
+    <script type="module" crossorigin src="/quordle/assets/index.8e9a6cc8.js"></script>
+    <link rel="modulepreload" href="/quordle/assets/vendor.92a689d9.js">
+    <link rel="stylesheet" href="/quordle/assets/index.66aa7cec.css">
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>JavaScript behar duzu aplikazio hau erabiltzeko.</noscript>
     <div id="root"></div>
     
   </body>
