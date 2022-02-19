@@ -156,7 +156,7 @@ var Ya = Ue((We) => {
     },
     gs = (e, s) => {
       if ("RelativeTimeFormat" in Intl) {
-        const i = new Intl.RelativeTimeFormat("en", { numeric: "auto" }),
+        const i = new Intl.RelativeTimeFormat("eu", { numeric: "auto" }),
           n = s.valueOf() - e.valueOf();
         for (const o in te) {
           const c = o;
@@ -828,10 +828,10 @@ var Ya = Ue((We) => {
                 const d = U(() => l() === 4, !0);
                 return () =>
                   d()
-                    ? "Quordle Complete!"
+                    ? "Zorionak!"
                     : l() === 3
-                    ? "So Close!"
-                    : "Better Luck Next Time!";
+                    ? "Ia-ia!"
+                    : "Ea hurrengoan!";
               })()
             ),
             u(
@@ -1134,16 +1134,16 @@ quordle.eus`);
       '<div class="flex flex-col rounded-t-lg text-center bg-gray-300 dark:bg-gray-900 border-t-2 p-4 border-white dark:border-gray-800"><div class="text-2xl flex"><div class="flex flex-1 justify-end items-center"><span class="mr-4"></span><span class="font-[Arial]"></span></div><div class="flex flex-1 justify-start items-center"><span class="font-[Arial]"></span><span class="ml-4"></span></div></div><div class="text-2xl flex"><div class="flex flex-1 justify-end items-center"><span class="mr-4"></span><span class="font-[Arial]"></span></div><div class="flex flex-1 justify-start items-center"><span class="font-[Arial]"></span><span class="ml-4"></span></div></div><div class="flex items-center justify-center mt-2"></div><textarea class="font-[Courier] w-[100%] text-sm text-black dark:text-white bg-white dark:bg-gray-800 text-center rounded-lg mt-2 resize-none" rows="8" readonly></textarea></div>'
     ),
     la = p(
-      '<div class="flex items-center justify-center"><div class="ml-2">Share</div></div>'
+      '<div class="flex items-center justify-center"><div class="ml-2">Partekatu</div></div>'
     ),
     na = p(
-      '<div class="inline-flex" role="group"><button type="button" class="ml-2 text-lg min-h-[50px] text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-l-lg px-4 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-r-[1px] border-gray-400"><div class="flex items-center justify-center"><div class="ml-2">Share Image</div></div></button><button type="button" class="text-lg min-h-[50px] text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-r-lg px-4 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"></button></div>'
+      '<div class="inline-flex" role="group"><button type="button" class="ml-2 text-lg min-h-[50px] text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-l-lg px-4 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border-r-[1px] border-gray-400"><div class="flex items-center justify-center"><div class="ml-2">Irudia partekatu</div></div></button><button type="button" class="text-lg min-h-[50px] text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-r-lg px-4 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"></button></div>'
     ),
     da = p(
       '<div class="flex items-center justify-center"><div class="ml-2">Save Image</div></div>'
     ),
     ua = p(
-      '<div class="flex items-center justify-center"><div class="ml-2">Copy to Clipboard</div></div>'
+      '<div class="flex items-center justify-center"><div class="ml-2">Arbelera kopiatu</div></div>'
     ),
     ca = p('<div class="flex items-center justify-center mt-2"></div>'),
     ke = (e) =>
